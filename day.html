@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>하루 분석 | SEOUL NOTE</title>
+  <link rel="stylesheet" href="site.css">
+  <script src="auth.js"></script>
+  <style>
+    .companion-section{margin-top:38px;padding:34px;background:linear-gradient(135deg,#fffdf8,#edf7f2);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow)}
+    .companion-intro{max-width:680px}.companion-intro h2{margin:6px 0 10px;font-size:clamp(24px,3vw,36px);letter-spacing:-.04em}.companion-intro>p:last-child{margin:0;color:var(--muted);line-height:1.8}
+    .companion-form{margin-top:26px}.companion-form fieldset{padding:0;border:0}.companion-form legend,.companion-note-label{display:block;margin-bottom:12px;font-size:12px;font-weight:700}.mood-options{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.mood-options label{cursor:pointer}.mood-options input{position:absolute;opacity:0}.mood-options span{display:block;padding:13px 10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.72);font-size:12px;text-align:center;transition:background .2s ease,border-color .2s ease,transform .2s ease}.mood-options input:checked+span{border-color:var(--teal);background:var(--mint);transform:translateY(-2px)}.mood-options input:focus-visible+span{outline:2px solid var(--teal);outline-offset:2px}
+    .companion-note-label{margin-top:22px}.companion-form textarea{display:block;width:100%;min-height:130px;padding:16px;border:1px solid var(--line);border-radius:14px;resize:vertical;background:rgba(255,255,255,.82);color:var(--ink);font:inherit;line-height:1.7}.companion-form textarea:focus{outline:2px solid var(--mint);border-color:var(--teal)}.companion-actions{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:13px}.companion-actions span{color:var(--muted);font-size:11px}.companion-actions .primary-button{border:0;cursor:pointer}.companion-response{margin-top:22px;padding:20px 22px;border-left:4px solid var(--teal);background:var(--paper);border-radius:0 14px 14px 0;line-height:1.7}.companion-response strong{font-size:16px}.companion-response p{margin:7px 0 0;color:var(--muted)}.companion-response .companion-echo{color:var(--teal);font-weight:700}.companion-safety{margin:20px 0 0;color:var(--muted);font-size:10px;line-height:1.7}.companion-safety strong{color:var(--ink)}
+    @media(max-width:520px){.companion-section{padding:24px 20px}.mood-options{grid-template-columns:repeat(2,1fr)}.companion-actions{align-items:flex-start;flex-direction:column}.companion-actions .primary-button{width:100%;text-align:center}}
+    .analysis-extra{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.pressure-options{display:flex;flex-wrap:wrap;gap:8px}.pressure-options label{cursor:pointer}.pressure-options input{position:absolute;opacity:0}.pressure-options span{display:block;padding:9px 11px;border:1px solid var(--line);border-radius:999px;background:var(--paper);font-size:11px}.pressure-options input:checked+span{border-color:var(--teal);background:var(--mint);font-weight:700}.analysis-extra select{width:100%;margin-top:7px;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font:inherit}.result-dashboard{grid-column:1/-1;padding:25px;background:var(--paper);border:1px solid var(--line)}.result-dashboard h2{margin:0 0 8px}.dashboard-note{margin:0;color:var(--muted);font-size:12px;line-height:1.7}.time-map{display:grid;gap:10px;margin-top:20px}.time-row{display:grid;grid-template-columns:90px 1fr 42px;gap:10px;align-items:center;font-size:11px}.time-row b{height:14px;background:#e9eeea;border-radius:99px;overflow:hidden}.time-row i{display:block;height:100%;border-radius:99px;background:var(--teal)}.time-row strong{color:var(--teal);text-align:right}.analysis-columns{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}.analysis-panel{padding:20px;border:1px solid var(--line);background:#fffdf8}.analysis-panel h3{margin:0 0 8px;font-size:15px}.alert-panel{background:#fff7df;border-color:#eadcae}.mission-panel{background:#edf7f2;border-color:#b9e2d4}.analysis-panel p{margin:0;color:var(--muted);font-size:12px;line-height:1.8}.tomorrow-list{display:grid;gap:8px;margin-top:13px}.tomorrow-list label{display:flex;gap:8px;align-items:center;font-size:11px}.tomorrow-list input{accent-color:var(--teal)}.today-note{margin-top:16px;padding:22px;text-align:center;background:var(--dark);color:#fff;border-radius:14px}.today-note strong{display:block;font-size:18px}.today-note p{margin:8px auto 0;max-width:540px;color:#cfe0da;font-size:12px;line-height:1.8}.streak-panel{margin-top:16px;padding:18px;border:1px solid var(--line);background:var(--paper)}.streak-dots{display:flex;gap:8px;margin-top:12px}.streak-dots span{display:grid;place-items:center;width:27px;height:27px;border-radius:50%;background:#e7eee9;color:var(--muted);font-size:10px}.streak-dots span.done{background:var(--teal);color:#fff}.streak-meta{margin:8px 0 0;color:var(--muted);font-size:11px}@media(max-width:700px){.analysis-extra,.analysis-columns{grid-template-columns:1fr}.time-row{grid-template-columns:72px 1fr 38px}}
+  </style>
+  <style>
+    .analysis-extra{grid-column:1/-1}
+    @media(max-width:700px){.day-form{grid-template-columns:1fr!important}.analysis-extra{grid-template-columns:1fr!important}.analysis-columns{grid-template-columns:1fr!important}}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html"><span class="brand-mark">S</span><span><strong>SEOUL NOTE</strong><small>유학생 생활 가이드</small></span></a>
+    <nav class="main-nav"><a href="index.html">홈</a><a class="active" href="day.html">하루 분석</a><a href="housing.html">주거</a><a href="money.html">생활비</a><a href="checklist.html">체크리스트</a></nav>
+    <a class="language-button" href="index.html">한국어</a>
+  </header>
+  <main class="detail-page form-page">
+    <a class="back" href="index.html">← SEOUL NOTE · 한국 유학생 생활 가이드</a>
+    <span class="category">YOUR REAL DAY</span>
+    <h1>하루 분석</h1>
+    <p class="subtitle">수면, 학업, 알바, 생활비와 오늘의 스트레스를 함께 입력하면 지금 무엇이 버거운지 구체적으로 확인할 수 있습니다.</p>
+
+    <section class="day-value-grid" aria-label="하루 분석의 가치">
+      <article class="value-card">
+        <span class="value-icon">📊</span>
+        <h3>한눈에 생활 상태 확인</h3>
+        <p>취침·기상, 학업, 통학, 월 지출을 입력하면 현재 생활 리듬을 숫자로 바로 확인할 수 있습니다.</p>
+      </article>
+      <article class="value-card">
+        <span class="value-icon">🎯</span>
+        <h3>문제점을 정확히 찾아냄</h3>
+        <p>점수가 낮은 항목을 보며 어떤 부분이 부족한지 판단할 수 있어, 무작정 절약하거나 잠을 줄이는 대신 효과적인 개선을 할 수 있습니다.</p>
+      </article>
+      <article class="value-card">
+        <span class="value-icon">✅</span>
+        <h3>실제 행동으로 연결</h3>
+        <p>점수만 보는 것이 아니라 ‘다음 행동’까지 제시해, 유학생이 바로 실행 가능한 개선 계획을 세울 수 있습니다.</p>
+      </article>
+    </section>
+
+    <form id="dayForm" class="day-form">
+      <div class="form-group"><h3>TIME</h3><div class="form-grid">
+        <label>취침 시간<input name="bedtime" type="time" value="01:00" required></label><label>기상 시간<input name="wakeTime" type="time" value="08:00" required></label>
+        <label>수업시간<input name="classHours" type="number" min="0" max="16" step=".5" value="5" required><span>시간</span></label><label>통학시간<input name="commuteMinutes" type="number" min="0" max="600" value="60" required><span>분</span></label>
+        <label>하루 알바시간<input name="work" type="number" min="0" max="16" step=".5" value="4" required><span>시간</span></label><label>주일 알바 횟수<input name="workDays" type="number" min="0" max="7" value="3" required><span>회</span></label>
+        <label>오늘의 스트레스<input name="stress" type="number" min="1" max="5" value="3" required><span>1~5</span></label>
+      </div></div>
+      <div class="form-group"><h3>MONEY</h3><div class="form-grid">
+        <label>월세<input name="rent" type="number" min="0" value="380000" required><span>원</span></label><label>식비<input name="food" type="number" min="0" value="220000" required><span>원</span></label>
+        <label>교통비<input name="transport" type="number" min="0" value="50000" required><span>원</span></label><label>통신비<input name="phone" type="number" min="0" value="35000" required><span>원</span></label>
+        <label>기타<input name="other" type="number" min="0" value="80000" required><span>원</span></label><label>월 알바 수입<input name="income" type="number" min="0" value="900000" required><span>원</span></label>
+      </div></div>
+      <div class="analysis-extra">
+        <label>오늘 사용한 돈<input name="todaySpend" type="number" min="0" value="28000" required><span>원</span></label>
+        <label>오늘의 기분<select name="mood"><option value="good">괜찮았어요</option><option value="tired">조금 지쳤어요</option><option value="low">많이 힘들었어요</option><option value="happy">기쁜 일이 있었어요</option></select></label>
+        <div><b class="companion-note-label">오늘 나를 힘들게 한 것은? (복수 선택)</b><div class="pressure-options">
+          <label><input type="checkbox" name="pressure" value="공부"><span>📚 공부</span></label><label><input type="checkbox" name="pressure" value="알바"><span>💼 알바</span></label><label><input type="checkbox" name="pressure" value="돈"><span>💰 돈</span></label><label><input type="checkbox" name="pressure" value="주거"><span>🏠 주거</span></label><label><input type="checkbox" name="pressure" value="관계"><span>👥 관계</span></label><label><input type="checkbox" name="pressure" value="한국어"><span>🗣️ 한국어</span></label><label><input type="checkbox" name="pressure" value="외로움"><span>🌧️ 외로움</span></label><label><input type="checkbox" name="pressure" value="수면 부족"><span>😴 수면 부족</span></label><label><input type="checkbox" name="pressure" value="미래 걱정"><span>🔭 미래 걱정</span></label>
+        </div></div>
+      </div>
+      <button class="primary-button form-submit" type="submit">점수 계산하기 →</button>
+    </form>
+    <section id="result" class="result" hidden>
+      <div class="score"><p class="eyebrow">YOUR RESULT</p><h2>한국 유학생활 점수</h2><strong id="scoreValue">0</strong><span>/ 100</span><p id="scoreMessage"></p></div>
+      <div class="type-card"><p class="eyebrow">ANALYSIS</p><h2 id="typeTitle">균형 잡힌 유학생</h2><p id="typeDescription">결과를 확인하세요.</p><div class="bars">
+        <div><span>⚡ ENERGY</span><b><i id="sleepBar"></i></b><strong id="sleepScore">0</strong></div><div><span>📚 STUDY</span><b><i id="studyBar"></i></b><strong id="studyScore">0</strong></div><div><span>💰 MONEY</span><b><i id="moneyBar"></i></b><strong id="moneyScore">0</strong></div><div><span>🧠 STRESS</span><b><i id="mindBar"></i></b><strong id="mindScore">0</strong></div><div><span>😊 LIFE</span><b><i id="lifeBar"></i></b><strong id="lifeScore">0</strong></div>
+      </div></div>
+      <div class="insights"><h2>왜 이런 점수가 나왔을까요?</h2><p class="visual-caption">입력한 숫자를 기준으로 원인과 바로 할 수 있는 행동을 보여드립니다.</p><div id="insightList"></div></div>
+      <div class="result-dashboard">
+        <p class="eyebrow">TODAY'S TIME MAP</p><h2>오늘의 24시간은 어디에 쓰였을까요?</h2><p class="dashboard-note" id="timeSummary">입력한 하루를 시간의 흐름으로 다시 보여드립니다.</p><div id="timeMap" class="time-map"></div>
+      </div>
+      <div class="analysis-columns">
+        <article class="analysis-panel alert-panel"><p class="eyebrow">LIFE ALERT</p><h3 id="alertTitle">오늘의 회복 시간을 확인해보세요.</h3><p id="alertText"></p></article>
+        <article class="analysis-panel mission-panel"><p class="eyebrow">ONE SMALL CHANGE</p><h3>내일 딱 하나만 바꿔보세요.</h3><p id="missionText"></p><div id="tomorrowList" class="tomorrow-list"></div></article>
+      </div>
+      <div class="today-note"><p class="eyebrow">TODAY'S NOTE</p><strong id="todayNoteTitle">오늘도 충분히 잘 버텼어요.</strong><p id="todayNoteText"></p></div>
+      <div class="streak-panel"><p class="eyebrow">MY LIFE STREAK</p><h3>오늘보다 조금 더 나은 내일</h3><div id="streakDots" class="streak-dots"></div><p id="streakMeta" class="streak-meta"></p></div>
+    </section>
+
+    <section class="companion-section" aria-labelledby="companion-title">
+      <div class="companion-intro">
+        <p class="eyebrow">END-OF-DAY COMPANION</p>
+        <h2 id="companion-title">오늘 하루, 마음은 어땠나요?</h2>
+        <p>잘한 일도, 힘들었던 일도 괜찮습니다. 오늘의 마음을 잠시 내려놓으면 내일을 조금 더 가볍게 시작할 수 있어요.</p>
+      </div>
+      <form id="companionForm" class="companion-form">
+        <fieldset>
+          <legend>지금 가장 가까운 마음</legend>
+          <div class="mood-options">
+            <label><input type="radio" name="mood" value="tired" checked><span>😮‍💨 지쳤어요</span></label>
+            <label><input type="radio" name="mood" value="worried"><span>🌧️ 걱정돼요</span></label>
+            <label><input type="radio" name="mood" value="happy"><span>🌱 기뻤어요</span></label>
+            <label><input type="radio" name="mood" value="calm"><span>🌙 괜찮아요</span></label>
+          </div>
+        </fieldset>
+        <label class="companion-note-label" for="companionNote">오늘 마음에 남은 이야기를 적어 보세요</label>
+        <textarea id="companionNote" name="note" maxlength="1000" placeholder="오늘 가장 힘들었던 일, 고마웠던 일, 혹은 그냥 털어놓고 싶은 마음을 적어 주세요."></textarea>
+        <div class="companion-actions"><span id="companionStatus">이 기록은 이 기기의 브라우저에만 저장됩니다.</span><button class="primary-button" type="submit">마음 전하기 <span aria-hidden="true">→</span></button></div>
+      </form>
+      <div id="companionResponse" class="companion-response" hidden aria-live="polite"></div>
+      <p class="companion-safety">마음이 너무 무겁거나 스스로를 해칠 생각이 든다면 혼자 견디지 말고 가까운 사람, 학교 상담센터 또는 한국 자살예방상담전화 <strong>109</strong>에 도움을 요청하세요. 긴급한 위험은 <strong>112</strong> 또는 <strong>119</strong>에 연락하세요.</p>
+    </section>
+
+    <section class="day-why-it-matters" aria-labelledby="day-benefit-title">
+      <div class="section-heading"><div><p class="eyebrow">WHY IT MATTERS</p><h2 id="day-benefit-title">이 기능이 중요한 이유</h2></div></div>
+      <div class="benefit-list">
+        <div class="benefit-item"><strong>1.</strong><span>유학생은 일상 루틴이 흔들리면 학업, 건강, 지출이 동시에 악화됩니다. 하루 분석은 이를 미리 감지합니다.</span></div>
+        <div class="benefit-item"><strong>2.</strong><span>점수와 대안 행동을 함께 보여주기 때문에, 사용자는 '무엇을 바꿔야 하는지'를 즉시 이해할 수 있습니다.</span></div>
+        <div class="benefit-item"><strong>3.</strong><span>맞춤형 데이터를 기반으로 조정하면, 학업 성취와 생활 안정성을 함께 높일 수 있어 실질적인 가치가 큽니다.</span></div>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer"><span>SEOUL NOTE</span><span><a href="index.html#why-title">About</a> · <a href="terms.html">이용약관</a> · <a href="privacy.html">개인정보처리방침</a></span><span>© 2026 Seoul Note</span></footer>
+  <script>
+    const $ = (selector) => document.querySelector(selector);
+    const clamp = (value) => Math.max(0, Math.min(100, Math.round(value)));
+    const toMinutes = (time) => { const [hours, minutes] = time.split(':').map(Number); return hours * 60 + minutes; };
+    const formatWon = (value) => `${value.toLocaleString('ko-KR')}원`;
+    function calculate(data) {
+      const sleepHours = ((toMinutes(data.wakeTime) - toMinutes(data.bedtime) + 1440) % 1440) / 60;
+      const expenses = data.rent + data.food + data.transport + data.phone + data.other;
+      const balance = data.income - expenses;
+      const dailyWorkHours = data.work * data.workDays / 7;
+      const fixedHours = sleepHours + data.classHours + dailyWorkHours + data.commuteMinutes / 60;
+      const freeHours = Math.max(0, 24 - fixedHours - 1.5);
+      const scores = {
+        sleepScore: clamp(100 - Math.abs(sleepHours - 8) * 18),
+        studyScore: clamp(55 + (data.classHours >= 4 ? 25 : 10) + (data.classHours <= 8 ? 15 : 0)),
+        timeScore: clamp(100 - (data.classHours + dailyWorkHours + data.commuteMinutes / 60 * 5) * 2.5),
+        moneyScore: clamp(50 + (data.income ? (balance / data.income) * 55 : -40) + (expenses <= 1200000 ? 12 : 0)),
+        mindScore: clamp(100 - data.stress * 18),
+        lifeScore: clamp((freeHours / 8) * 100)
+      };
+      scores.overall = clamp((scores.sleepScore + scores.studyScore + scores.timeScore + scores.moneyScore + scores.mindScore) / 5);
+      return { ...scores, sleepHours, expenses, balance, fixedHours, freeHours, dailyWorkHours };
+    }
+    function renderResult(data, scores) {
+      const balanced = scores.overall >= 75;
+      $('#scoreValue').textContent = scores.overall;
+      $('#scoreMessage').textContent = balanced ? '현재 생활 리듬이 비교적 안정적입니다. 이 점수는 학업, 건강, 지출이 서로 균형을 이루고 있다는 신호입니다.' : '수면, 이동시간, 지출 중 우선순위를 정해 조정하면 생활 안정성을 빠르게 개선할 수 있습니다.';
+      $('#typeTitle').textContent = balanced ? '균형 잡힌 유학생' : '리듬을 조정하는 유학생';
+      $('#typeDescription').textContent = `수면 ${scores.sleepHours.toFixed(1)}시간, 오늘 지출 ${formatWon(data.todaySpend)}, 스트레스 ${data.stress}/5를 기준으로 분석했습니다. 점수는 평가가 아니라 다음 행동을 고르는 안내입니다.`;
+      [['study', 'study'], ['money', 'money'], ['sleep', 'sleep'], ['mind', 'mind'], ['life', 'life']].forEach(([name, scoreName]) => { $(`#${name}Bar`).style.width = `${scores[`${scoreName}Score`]}%`; $(`#${name}Score`).textContent = scores[`${scoreName}Score`]; });
+      const insightList = $('#insightList');
+      insightList.innerHTML = '';
+      const addInsight = (icon, title, detail, action) => { insightList.insertAdjacentHTML('beforeend', `<article><strong>${icon} ${title}</strong><p>${detail}</p><p><b>다음 행동:</b> ${action}</p></article>`); };
+      addInsight('😴', '수면 점수의 이유', `취침 ${data.bedtime}부터 기상 ${data.wakeTime}까지 약 ${scores.sleepHours.toFixed(1)}시간입니다.`, scores.sleepHours < 7 ? '이번 주에는 취침 시간을 30분 앞당겨 보세요.' : '기상 시간을 매일 비슷하게 유지하세요.');
+      addInsight('💰', '경제 점수의 이유', `월 지출 ${formatWon(scores.expenses)}, 수입 ${formatWon(data.income)}, 예상 잔액 ${formatWon(scores.balance)}입니다.`, scores.balance < 0 ? '식비와 기타 지출을 주간 한도로 나눠 적자를 줄여 보세요.' : '잔액의 일부를 비상금으로 분리해 보세요.');
+      addInsight('⏰', '시간 점수의 이유', `수업 ${data.classHours}시간, 통학 ${data.commuteMinutes}분, 주 ${data.workDays}회 알바를 입력했습니다. 하루 평균 알바 시간은 약 ${scores.dailyWorkHours.toFixed(1)}시간입니다.`, data.commuteMinutes >= 120 ? '통학 경로를 다시 비교하고 이동 중 회복 시간을 확보하세요.' : '수업과 알바 사이에 최소 30분의 회복 시간을 남겨 보세요.');
+      addInsight('🧠', '마음 점수의 이유', `오늘 느낀 스트레스 정도를 ${data.stress}/5로 입력했습니다. 점수는 감정을 평가하는 기준이 아니라 현재 부담을 알아차리는 신호입니다.`, data.stress >= 4 ? '오늘은 해결해야 할 일을 하나만 정하고, 믿을 수 있는 사람에게 현재 상태를 알려 보세요.' : '잠깐의 휴식과 마음 기록으로 오늘의 부담을 정리해 보세요.');
+      const pressureText = data.pressure.length ? data.pressure.join(' + ') : '특별한 이유 없음';
+      const pressureParticle = data.pressure.length ? '이' : '이';
+        addInsight('🔎', '오늘의 압력 지도', `오늘 기록한 주요 압력 요인은 ${pressureText}입니다.`, data.pressure.length ? '가장 크게 느껴지는 한 가지 문제만 골라 내일의 작은 행동으로 바꿔 보세요.' : '이유를 정확히 설명하기 어려운 날도 괜찮아요. 휴식과 마음 기록부터 시작해 보세요.');
+      const timeItems = [['수면', scores.sleepHours], ['학교', data.classHours], ['알바', scores.dailyWorkHours], ['통학', data.commuteMinutes / 60], ['식사·생활', 1.5], ['자유시간', scores.freeHours]];
+      $('#timeMap').innerHTML = timeItems.map(([label, hours]) => `<div class="time-row"><span>${label}</span><b><i style="width:${Math.min(100, hours / 12 * 100)}%"></i></b><strong>${hours.toFixed(1)}h</strong></div>`).join('');
+      $('#timeSummary').textContent = `학교·알바·통학에 ${(data.classHours + scores.dailyWorkHours + data.commuteMinutes / 60).toFixed(1)}시간을 사용했고, 자유시간은 약 ${scores.freeHours.toFixed(1)}시간입니다.`;
+      const overloaded = scores.fixedHours >= 18 || scores.sleepHours < 6.5 || data.stress >= 4;
+      $('#alertTitle').textContent = overloaded ? '오늘은 조금 많이 버틴 하루였어요.' : '오늘의 회복 시간을 잘 지켜보세요.';
+      $('#alertText').textContent = overloaded ? `고정 일정이 ${scores.fixedHours.toFixed(1)}시간이거나 스트레스가 높아요. 내일 일정 중 30분을 줄일 수 있는지 확인해 보세요.` : `현재 고정 일정은 ${scores.fixedHours.toFixed(1)}시간입니다. 남은 시간을 회복과 생활 정리에 나누어 사용해 보세요.`;
+      const mission = scores.sleepScore < 65 ? '내일은 오늘보다 30분 일찍 잠자리에 들어보세요.' : scores.mindScore < 45 ? '내일은 믿을 수 있는 사람에게 현재 마음을 한 문장으로 알려보세요.' : scores.moneyScore < 55 ? '내일은 한 끼만 직접 준비해 오늘 지출을 조금 줄여보세요.' : scores.timeScore < 55 ? '내일은 일정 사이에 30분의 회복 시간을 먼저 확보해보세요.' : '내일도 물 한 잔과 10분의 온전한 휴식으로 시작해보세요.';
+      $('#missionText').textContent = mission;
+      $('#tomorrowList').innerHTML = `<label><input type="checkbox"> ${mission}</label><label><input type="checkbox"> 오늘의 마음을 한 줄 기록하기</label>`;
+      const pressureNote = data.stress >= 4 ? '모든 문제를 오늘 해결할 필요는 없어요. 오늘은 하나만 해결해도 충분합니다.' : data.mood === 'happy' ? '기쁜 순간도 생활의 중요한 데이터예요. 오늘의 좋은 일을 기억해 두세요.' : '완벽하지 않아도 괜찮아요. 오늘 하루를 끝까지 살아낸 것 자체가 충분한 일입니다.';
+      $('#todayNoteTitle').textContent = data.mood === 'tired' || data.stress >= 4 ? '많이 지쳤지만, 끝까지 해낸 사람이에요.' : '오늘도 충분히 잘 버텼어요.';
+      $('#todayNoteText').textContent = pressureNote;
+      renderStreak(scores.overall);
+        localStorage.setItem('seoulNoteLastAnalysis', JSON.stringify({ score: scores.overall, sleep: scores.sleepHours, study: data.classHours, work: scores.dailyWorkHours, spend: data.todaySpend, stress: data.stress, mood: data.mood, savedAt: new Date().toISOString() }));
+      $('#result').hidden = false;
+      $('#result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    function renderStreak(score) {
+      const history = JSON.parse(localStorage.getItem('seoulNoteHistory') || '[]');
+      const today = new Date().toISOString().slice(0, 10);
+      const updated = [...history.filter((entry) => entry.date !== today), { date: today, score }].slice(-7);
+      localStorage.setItem('seoulNoteHistory', JSON.stringify(updated));
+      const dots = Array.from({ length: 7 }, (_, index) => updated[index]);
+      $('#streakDots').innerHTML = dots.map((entry) => `<span class="${entry ? 'done' : ''}">${entry ? '●' : '○'}</span>`).join('');
+      $('#streakMeta').textContent = `${updated.length}일 기록 중 · 오늘의 목표는 100점이 아니라 어제보다 조금 나아지는 것입니다.`;
+    }
+    $('#dayForm').addEventListener('submit', (event) => { event.preventDefault(); const formData = new FormData(event.currentTarget); const values = Object.fromEntries(formData); const data = Object.fromEntries(Object.entries(values).map(([key, value]) => [key, ['bedtime', 'wakeTime', 'mood'].includes(key) ? value : Number(value)])); data.pressure = formData.getAll('pressure'); renderResult(data, calculate(data)); });
+  </script>
+  <script>
+    const companionForm = document.querySelector('#companionForm');
+    const companionNote = document.querySelector('#companionNote');
+    const companionResponse = document.querySelector('#companionResponse');
+    const companionStatus = document.querySelector('#companionStatus');
+    const companionMessages = {
+      tired: ['오늘 정말 많이 애썼어요.', '지친 마음은 부족함의 증거가 아니라, 그만큼 열심히 하루를 건넜다는 신호일 수 있어요. 지금은 해결보다 잠깐 쉬어도 괜찮습니다.'],
+      worried: ['걱정이 커지는 밤이 있죠.', '아직 오지 않은 내일까지 한 번에 해결하려 하지 않아도 돼요. 오늘 할 수 있는 가장 작은 일 하나만 남기고, 나머지는 잠시 내려놓아도 괜찮습니다.'],
+      happy: ['오늘의 좋은 순간을 잘 간직했네요.', '작은 기쁨도 낯선 곳에서 생활을 이어 가게 하는 소중한 힘이에요. 무엇이 기뻤는지 기억해 두면 힘든 날에도 다시 꺼내 볼 수 있습니다.'],
+      calm: ['오늘의 마음을 차분히 돌보고 있네요.', '완벽하지 않아도 괜찮아요. 무난하게 지나간 하루도 충분히 잘 살아낸 하루입니다.']
+    };
+    const savedCompanion = JSON.parse(localStorage.getItem('seoulNoteCompanion') || 'null');
+    if (savedCompanion) {
+      companionNote.value = savedCompanion.note || '';
+      const savedMood = document.querySelector(`[name="mood"][value="${savedCompanion.mood}"]`);
+      if (savedMood) savedMood.checked = true;
+      companionStatus.textContent = '마지막 기록을 불러왔습니다. 새로운 마음으로 다시 적어도 좋아요.';
+    }
+    companionForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const formData = new FormData(companionForm);
+      const mood = formData.get('mood');
+      const note = companionNote.value.trim();
+      const [title, message] = companionMessages[mood];
+      localStorage.setItem('seoulNoteCompanion', JSON.stringify({ mood, note, savedAt: new Date().toISOString() }));
+      companionResponse.innerHTML = `<strong>${title}</strong><p>${message}</p>${note ? '<p class="companion-echo">“오늘의 마음을 이곳에 잘 내려놓았어요.”</p>' : ''}`;
+      companionResponse.hidden = false;
+      companionStatus.textContent = '오늘의 기록을 이 기기에 저장했습니다.';
+      companionResponse.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  </script>
+  <script>
+    const savedDay = JSON.parse(localStorage.getItem('seoulNoteDay') || 'null');
+    if (savedDay) Object.entries(savedDay).forEach(([key, value]) => { const input = document.querySelector(`[name="${key}"]`); if (input) input.value = value; });
+    document.querySelector('#dayForm').addEventListener('submit', (event) => { const values = Object.fromEntries(new FormData(event.currentTarget)); localStorage.setItem('seoulNoteDay', JSON.stringify(values)); });
+  </script>
+</body>
+</html>
